@@ -180,7 +180,12 @@ section { padding-top: 54px; }
   color: var(--text); box-shadow: var(--shadow); transition: .18s;
 }
 .link-card:hover { transform: translateY(-2px); border-color: var(--accent); text-decoration: none; }
-.link-card .ico { font-size: 19px; flex: none; }
+.link-card .ico {
+  font-size: 19px; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px;
+}
+.link-card .ico svg { display: block; width: 20px; height: 20px; }
 .link-card .meta { display: flex; flex-direction: column; line-height: 1.35; }
 .link-card .meta small { color: var(--muted); font-size: 12px; }
 
