@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  /* ---------- 1. 主题切换 ---------- */
+  /* ================= 1. 主题切换 ================= */
   var root = document.documentElement;
   var btn = document.getElementById('themeBtn');
 
@@ -19,7 +19,9 @@
 
   var saved = null;
   try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
-  var theme = (saved === 'dark' || saved === 'light') ? saved : (systemPrefersDark() ? 'dark' : 'light');
+  var theme = (saved === 'dark' || saved === 'light')
+    ? saved
+    : (systemPrefersDark() ? 'dark' : 'light');
   applyTheme(theme);
 
   if (btn) {
@@ -45,21 +47,62 @@
     else if (mq.addListener) { mq.addListener(onChange); }
   }
 
-  /* ---------- 2. 导航高亮 ---------- */
-  var path = window.location.pathname.replace(/\/+$/, '');
-  var last = path.substring(path.lastIndexOf('/') + 1);
-  if (last === '') { last = 'index.html'; }
-  var links = document.querySelectorAll('.nav-links a');
-  for (var i = 0; i < links.length; i++) {
-    var href = links[i].getAttribute('href') || '';
-    var target = href.replace(/^\.\//, '').replace(/^\/+/, '');
-    if (target === last) {
-      links[i].classList.add('active');
-      links[i].setAttribute('aria-current', 'page');
+  /* ================= 2. 滚动定位导航高亮 ================= */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav-links a'));
+  var hashLinks = links.filter(function (a) {
+    var h = a.getAttribute('href') || '';
+    return h.charAt(0) === '#' && h.length > 1;
+  });
+
+  function activate(el) {
+    links.forEach(function (a) {
+      a.classList.remove('active');
+      a.removeAttribute('aria-current');
+    });
+    if (el) {
+      el.classList.add('active');
+      el.setAttribute('aria-current', 'true');
     }
   }
 
-  /* ---------- 3. 年份 ---------- */
+  if (hashLinks.length && 'IntersectionObserver' in window) {
+    var byId = {};
+    var targets = [];
+    hashLinks.forEach(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      var el = document.getElementById(id);
+      if (el) { byId[id] = a; targets.push(el); }
+    });
+
+    var visible = {};
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { visible[en.target.id] = en.intersectionRatio; }
+        else { delete visible[en.target.id]; }
+      });
+      var bestId = null, bestRatio = -1;
+      Object.keys(visible).forEach(function (id) {
+        if (visible[id] > bestRatio) { bestRatio = visible[id]; bestId = id; }
+      });
+      if (bestId) {
+        activate(byId[bestId]);
+      } else if (window.scrollY < 120) {
+        activate(null);
+      }
+    }, {
+      rootMargin: '-80px 0px -55% 0px',
+      threshold: [0, 0.15, 0.35, 0.6, 1]
+    });
+
+    targets.forEach(function (t) { spy.observe(t); });
+
+    /* 点击时立刻高亮 */
+    hashLinks.forEach(function (a) {
+      a.addEventListener('click', function () { activate(a); });
+    });
+  }
+
+  /* ================= 3. 年份 ================= */
   var y = document.getElementById('year');
   if (y) { y.textContent = String(new Date().getFullYear()); }
 })();

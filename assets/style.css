@@ -97,32 +97,6 @@ code {
 /* ---------------- 布局 ---------------- */
 main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px 80px; }
 
-/* 内页标题 */
-.page-head { padding: 56px 0 8px; border-bottom: 1px solid var(--border); margin-bottom: 34px; }
-.page-head .en {
-  font-size: 12px; letter-spacing: 1.8px; text-transform: uppercase;
-  color: var(--muted); font-weight: 700; display: block; margin-bottom: 8px;
-}
-.page-head h1 { font-size: clamp(26px, 4vw, 36px); margin: 0 0 10px; letter-spacing: -.4px; }
-.page-head p { color: var(--muted); font-size: 16px; margin: 0 0 26px; max-width: 68ch; }
-
-/* ---------------- Hero ---------------- */
-.hero { padding: 68px 0 8px; }
-.avatar {
-  width: 78px; height: 78px; border-radius: 22px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  display: grid; place-items: center; color: #fff;
-  font-size: 31px; font-weight: 700;
-  margin-bottom: 22px; box-shadow: var(--shadow);
-}
-.hero h1 { font-size: clamp(30px, 5vw, 46px); margin: 0 0 14px; letter-spacing: -.8px; line-height: 1.22; }
-.hero h1 .grad {
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.hero .lead { font-size: 17px; color: var(--muted); max-width: 64ch; margin: 0 0 26px; }
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-
 /* ---------------- 按钮 ---------------- */
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
@@ -248,8 +222,6 @@ footer {
   .nav-inner { flex-wrap: wrap; }
   .nav-links { width: 100%; margin-left: 0; order: 3; }
   .theme-btn { margin-left: auto; }
-  .hero { padding-top: 42px; }
-  .page-head { padding-top: 38px; }
   section { padding-top: 42px; }
   .list li { flex-direction: column; gap: 2px; }
   .list .date { min-width: 0; }

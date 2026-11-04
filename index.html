@@ -3,21 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Je0on · 个人主页</title>
-<meta name="description" content="Je0on 的个人主页 —— AI API 代理、Cloudflare Workers 与网络工具">
+<title>Je0on</title>
+<meta name="description" content="Je0on —— AI API 代理、Cloudflare Workers 与网络工具">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
 <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
+<body id="top">
 
 <header class="nav">
   <div class="nav-inner">
-    <a class="brand" href="index.html">Je0on<span class="dot">.</span></a>
+    <a class="brand" href="#top">Je0on<span class="dot">.</span></a>
     <nav class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="about.html">关于</a>
-      <a href="projects.html">项目</a>
-      <a href="tools.html">工具</a>
+      <a href="#about">关于</a>
+      <a href="#projects">项目</a>
+      <a href="#tools">工具</a>
     </nav>
     <button class="theme-btn" id="themeBtn" title="切换主题" aria-label="切换主题">🌙</button>
   </div>
@@ -25,66 +24,75 @@
 
 <main>
 
-  <!-- ================= Hero ================= -->
-  <section class="hero">
-    <div class="avatar">J</div>
-    <h1>你好,我是 <span class="grad">Je0on</span></h1>
-    <p class="lead">
-      折腾 AI API 代理与网络工具。主要方向:大模型接口转发、Cloudflare Workers 无服务部署、
-      以及路由器 / 内网相关的自建服务。
-    </p>
-    <div class="hero-actions">
-      <a class="btn primary" href="projects.html">看看我的项目 →</a>
-      <a class="btn" href="https://github.com/Je0on" target="_blank" rel="noopener">GitHub</a>
+  <!-- ==================== 关于 ==================== -->
+  <section id="about">
+    <div class="sec-head"><h2>关于</h2><span class="en">About</span></div>
+
+    <div class="about-grid">
+      <div class="stat"><div class="k">AI API</div><div class="v">Gemini / Groq / OpenAI 协议互转</div></div>
+      <div class="stat"><div class="k">Serverless</div><div class="v">Cloudflare Workers · Vercel</div></div>
+      <div class="stat"><div class="k">Networking</div><div class="v">路由器插件 · 内网穿透 · 反向代理</div></div>
+      <div class="stat"><div class="k">Self-hosted</div><div class="v">自建服务 · 容器化部署</div></div>
+    </div>
+
+    <div class="prose" style="margin-top:30px;">
+      <p>
+        主要在做大模型接口的「搬运」工作 —— 把各家不同协议的 API 统一成好用的形式。
+        比如把 Gemini 包装成 OpenAI 兼容接口,这样任何支持 OpenAI 协议的客户端
+        (各种聊天前端、编辑器插件、自动化脚本)都能无感接入。
+      </p>
+      <p>
+        部署上偏好无服务器方案:Cloudflare Workers 免费额度足够个人使用,
+        而且全球边缘节点意味着调用延迟低。配合 Vercel 做一些演示前端也很方便。
+      </p>
+
+      <h3>技能</h3>
+      <ul>
+        <li><strong>语言</strong> · JavaScript / Node.js、Python、一点 Shell</li>
+        <li><strong>平台</strong> · Cloudflare Workers、Vercel、GitHub Actions</li>
+        <li><strong>接口</strong> · OpenAI / Gemini / Groq 协议适配与反向代理</li>
+        <li><strong>网络</strong> · 反向代理、内网穿透、路由器固件插件</li>
+        <li><strong>工具</strong> · Git、Docker、PowerShell 自动化</li>
+      </ul>
+
+      <div class="note">
+        <strong>这个站点</strong>是纯静态页面,托管在 GitHub Pages,网址固定为
+        <a href="https://je0on.github.io">je0on.github.io</a>。
+        没有用框架和 CDN,只有一个 CSS 文件和一个 JS 文件,加载快、不受网络环境影响。
+      </div>
     </div>
   </section>
 
-  <!-- ================= 快速导航 ================= -->
-  <section>
-    <div class="sec-head"><h2>快速导航</h2><span class="en">Explore</span></div>
-    <div class="links">
-      <a class="link-card" href="about.html">
-        <span class="ico">👤</span>
-        <span class="meta">关于我<small>方向与技能</small></span>
-      </a>
-      <a class="link-card" href="projects.html">
-        <span class="ico">📦</span>
-        <span class="meta">项目<small>做过的工具</small></span>
-      </a>
-      <a class="link-card" href="tools.html">
-        <span class="ico">🧰</span>
-        <span class="meta">工具与链接<small>常用入口</small></span>
-      </a>
-      <a class="link-card" href="https://github.com/Je0on" target="_blank" rel="noopener">
-        <span class="ico">🐙</span>
-        <span class="meta">GitHub<small>@Je0on</small></span>
-      </a>
-    </div>
-  </section>
-
-  <!-- ================= 精选项目 ================= -->
-  <section>
-    <div class="sec-head"><h2>精选项目</h2><span class="en">Featured</span></div>
+  <!-- ==================== 项目 ==================== -->
+  <section id="projects">
+    <div class="sec-head"><h2>项目</h2><span class="en">Projects</span></div>
     <div class="grid">
 
       <article class="card">
         <h3><a href="https://github.com/Je0on/gemini" target="_blank" rel="noopener">gemini</a></h3>
-        <p>Gemini 相关的接口实验与封装,用于把 Gemini 能力接入到兼容 OpenAI 的调用方式里。</p>
+        <p>
+          Gemini 相关的接口实验与封装。目标是把 Gemini 的能力接入到兼容 OpenAI 的调用方式里,
+          方便复用已有的客户端和脚本。
+        </p>
         <div class="card-foot">
           <div class="tags">
             <span class="tag lang">JavaScript</span>
             <span class="tag">Gemini</span>
+            <span class="tag">API</span>
           </div>
         </div>
       </article>
 
       <article class="card">
         <h3><a href="https://github.com/Je0on/Groq-API-CloudflareWorker" target="_blank" rel="noopener">Groq-API-CloudflareWorker</a></h3>
-        <p>把 Groq API 部署到 Cloudflare Workers 上的转发层,零服务器、全球边缘节点,低延迟调用大模型。</p>
+        <p>
+          把 Groq API 部署到 Cloudflare Workers 上的转发层。零服务器、全球边缘节点,
+          适合需要低延迟调用大模型的场景。
+        </p>
         <div class="card-foot">
           <div class="tags">
             <span class="tag lang">JavaScript</span>
-            <span class="tag">Workers</span>
+            <span class="tag">Cloudflare Workers</span>
             <span class="tag">Groq</span>
           </div>
         </div>
@@ -92,19 +100,96 @@
 
       <article class="card">
         <h3><a href="https://github.com/Je0on/openai-gemini" target="_blank" rel="noopener">openai-gemini</a></h3>
-        <p>✦ Gemini ➜ OpenAI API 代理。把 Gemini 包装成 OpenAI 兼容接口,任意支持 OpenAI 协议的客户端都能直接用。</p>
+        <p>
+          ✦ Gemini ➜ OpenAI API 代理。把 Gemini 包装成 OpenAI 兼容接口,
+          任意支持 OpenAI 协议的客户端都能直接用。
+        </p>
         <div class="card-foot">
           <div class="tags">
             <span class="tag lang">JavaScript</span>
+            <span class="tag">Serverless</span>
             <span class="tag">Proxy</span>
+            <span class="tag"><a href="https://my-openai-gemini-demo.vercel.app/" target="_blank" rel="noopener">Demo ↗</a></span>
           </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>待补充</h3>
+        <p>
+          新项目放这里。复制上面任意一个 <code>&lt;article class="card"&gt;</code> 区块,
+          改标题、描述和标签即可。
+        </p>
+        <div class="card-foot">
+          <div class="tags"><span class="tag">占位</span></div>
         </div>
       </article>
 
     </div>
     <p style="margin-top:20px;">
-      <a class="btn" href="projects.html">查看全部项目 →</a>
+      <a class="btn" href="https://github.com/Je0on" target="_blank" rel="noopener">全部仓库 ↗</a>
     </p>
+  </section>
+
+  <!-- ==================== 工具与链接 ==================== -->
+  <section id="tools">
+    <div class="sec-head"><h2>工具与链接</h2><span class="en">Tools &amp; Links</span></div>
+
+    <h3 style="font-size:15px;color:var(--muted);margin:0 0 12px;">我的项目</h3>
+    <div class="links">
+      <a class="link-card" href="https://github.com/Je0on" target="_blank" rel="noopener">
+        <span class="ico">🐙</span>
+        <span class="meta">GitHub<small>@Je0on</small></span>
+      </a>
+      <a class="link-card" href="https://my-openai-gemini-demo.vercel.app/" target="_blank" rel="noopener">
+        <span class="ico">🔌</span>
+        <span class="meta">openai-gemini Demo<small>Vercel 部署示例</small></span>
+      </a>
+      <a class="link-card" href="https://github.com/Je0on/Groq-API-CloudflareWorker" target="_blank" rel="noopener">
+        <span class="ico">⚡</span>
+        <span class="meta">Groq Worker<small>Cloudflare 转发层</small></span>
+      </a>
+    </div>
+
+    <h3 style="font-size:15px;color:var(--muted);margin:28px 0 12px;">大模型服务</h3>
+    <div class="links">
+      <a class="link-card" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">
+        <span class="ico">💎</span>
+        <span class="meta">Google AI Studio<small>申请 Gemini API Key</small></span>
+      </a>
+      <a class="link-card" href="https://console.groq.com/keys" target="_blank" rel="noopener">
+        <span class="ico">🚀</span>
+        <span class="meta">Groq Console<small>API Keys / 用量</small></span>
+      </a>
+      <a class="link-card" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">
+        <span class="ico">🤖</span>
+        <span class="meta">OpenAI Platform<small>API Keys</small></span>
+      </a>
+      <a class="link-card" href="https://openrouter.ai/" target="_blank" rel="noopener">
+        <span class="ico">🔀</span>
+        <span class="meta">OpenRouter<small>多模型聚合网关</small></span>
+      </a>
+    </div>
+
+    <h3 style="font-size:15px;color:var(--muted);margin:28px 0 12px;">部署与网络</h3>
+    <div class="links">
+      <a class="link-card" href="https://dash.cloudflare.com/" target="_blank" rel="noopener">
+        <span class="ico">☁️</span>
+        <span class="meta">Cloudflare Dash<small>Workers / 隧道管理</small></span>
+      </a>
+      <a class="link-card" href="https://vercel.com/dashboard" target="_blank" rel="noopener">
+        <span class="ico">▲</span>
+        <span class="meta">Vercel<small>前端与函数部署</small></span>
+      </a>
+      <a class="link-card" href="https://github.com/settings/tokens" target="_blank" rel="noopener">
+        <span class="ico">🔑</span>
+        <span class="meta">GitHub Tokens<small>Personal Access Token</small></span>
+      </a>
+      <a class="link-card" href="https://github.com/Je0on/Je0on.github.io" target="_blank" rel="noopener">
+        <span class="ico">📄</span>
+        <span class="meta">本站在源仓库<small>直接改 HTML</small></span>
+      </a>
+    </div>
   </section>
 
 </main>
