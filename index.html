@@ -3,201 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Je0on</title>
+<title>Je0on · 个人主页</title>
 <meta name="description" content="Je0on 的个人主页 —— AI API 代理、Cloudflare Workers 与网络工具">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
-<style>
-  :root {
-    --bg: #ffffff;
-    --bg-soft: #f6f7f9;
-    --surface: #ffffff;
-    --border: #e6e8ec;
-    --text: #0f172a;
-    --muted: #64748b;
-    --accent: #4f46e5;
-    --accent-2: #06b6d4;
-    --shadow: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
-    --radius: 16px;
-  }
-  html[data-theme="dark"] {
-    --bg: #0b1020;
-    --bg-soft: #101728;
-    --surface: #141c30;
-    --border: #243149;
-    --text: #e8ecf4;
-    --muted: #93a1b8;
-    --accent: #818cf8;
-    --accent-2: #22d3ee;
-    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
-  }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 84px; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Roboto, "Helvetica Neue", sans-serif;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-  }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-
-  /* ---------- 导航 ---------- */
-  .nav {
-    position: sticky; top: 0; z-index: 50;
-    backdrop-filter: saturate(180%) blur(14px);
-    background: color-mix(in srgb, var(--bg) 82%, transparent);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-inner {
-    max-width: 1080px; margin: 0 auto; padding: 14px 24px;
-    display: flex; align-items: center; gap: 20px;
-  }
-  .brand {
-    font-weight: 700; font-size: 17px; color: var(--text); letter-spacing: .3px;
-    text-decoration: none; white-space: nowrap;
-  }
-  .brand:hover { text-decoration: none; }
-  .brand .dot {
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .nav-links { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
-  .nav-links a {
-    color: var(--muted); font-size: 14.5px; padding: 6px 12px;
-    border-radius: 999px; text-decoration: none; transition: .18s;
-  }
-  .nav-links a:hover { color: var(--text); background: var(--bg-soft); text-decoration: none; }
-  .theme-btn {
-    border: 1px solid var(--border); background: var(--surface); color: var(--text);
-    width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
-    font-size: 15px; line-height: 1; display: grid; place-items: center; transition: .18s;
-  }
-  .theme-btn:hover { border-color: var(--accent); }
-
-  /* ---------- 布局 ---------- */
-  main { max-width: 1080px; margin: 0 auto; padding: 0 24px 80px; }
-  section { padding-top: 64px; }
-  .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 22px; }
-  .sec-head h2 { font-size: 22px; margin: 0; letter-spacing: .2px; }
-  .sec-head .en {
-    font-size: 12px; letter-spacing: 1.6px; text-transform: uppercase;
-    color: var(--muted); font-weight: 600;
-  }
-  .sec-head::after {
-    content: ""; flex: 1; height: 1px; background: var(--border); margin-left: 6px;
-  }
-
-  /* ---------- Hero ---------- */
-  .hero { padding-top: 72px; }
-  .avatar {
-    width: 76px; height: 76px; border-radius: 22px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    display: grid; place-items: center; color: #fff; font-size: 30px; font-weight: 700;
-    margin-bottom: 22px; box-shadow: var(--shadow);
-  }
-  .hero h1 { font-size: clamp(30px, 5vw, 44px); margin: 0 0 12px; letter-spacing: -.5px; line-height: 1.25; }
-  .hero h1 .grad {
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .hero p.lead { font-size: 17px; color: var(--muted); max-width: 62ch; margin: 0 0 26px; }
-  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 18px; border-radius: 11px; font-size: 14.5px; font-weight: 600;
-    border: 1px solid var(--border); background: var(--surface); color: var(--text);
-    text-decoration: none; transition: .18s; box-shadow: var(--shadow);
-  }
-  .btn:hover { text-decoration: none; transform: translateY(-1px); border-color: var(--accent); }
-  .btn.primary {
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    color: #fff; border-color: transparent;
-  }
-  .btn.primary:hover { filter: brightness(1.06); }
-
-  /* ---------- 卡片网格 ---------- */
-  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow);
-    transition: .2s; display: flex; flex-direction: column;
-  }
-  .card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
-  .card h3 { margin: 0 0 8px; font-size: 16.5px; display: flex; align-items: center; gap: 8px; }
-  .card h3 a { color: var(--text); }
-  .card h3 a:hover { color: var(--accent); text-decoration: none; }
-  .card p { margin: 0 0 16px; color: var(--muted); font-size: 14.5px; flex: 1; }
-  .tags { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .tag {
-    font-size: 12px; padding: 3px 10px; border-radius: 999px;
-    background: var(--bg-soft); border: 1px solid var(--border); color: var(--muted);
-  }
-  .tag.lang { color: var(--text); }
-  .tag.lang::before {
-    content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-    background: var(--accent-2); margin-right: 6px; vertical-align: 1px;
-  }
-
-  /* ---------- 关于 ---------- */
-  .about-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-  .stat {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 18px 20px; box-shadow: var(--shadow);
-  }
-  .stat .k { font-size: 22px; font-weight: 700; }
-  .stat .v { font-size: 13px; color: var(--muted); margin-top: 2px; }
-
-  /* ---------- 列表 ---------- */
-  .list { list-style: none; margin: 0; padding: 0; }
-  .list li {
-    display: flex; gap: 14px; align-items: baseline;
-    padding: 14px 2px; border-bottom: 1px solid var(--border);
-  }
-  .list li:last-child { border-bottom: 0; }
-  .list .date { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 92px; }
-  .list .txt { color: var(--text); font-size: 15px; }
-
-  /* ---------- 联系 ---------- */
-  .links { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
-  .link-card {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 13px;
-    padding: 14px 16px; color: var(--text); text-decoration: none;
-    box-shadow: var(--shadow); transition: .18s;
-  }
-  .link-card:hover { transform: translateY(-2px); border-color: var(--accent); text-decoration: none; }
-  .link-card .ico { font-size: 19px; }
-  .link-card .meta { display: flex; flex-direction: column; line-height: 1.35; }
-  .link-card .meta small { color: var(--muted); font-size: 12px; }
-
-  footer {
-    border-top: 1px solid var(--border); margin-top: 72px;
-    padding: 26px 24px; text-align: center; color: var(--muted); font-size: 13.5px;
-  }
-  footer code {
-    background: var(--bg-soft); border: 1px solid var(--border);
-    padding: 1px 6px; border-radius: 6px; font-size: 12.5px;
-  }
-  @media (max-width: 560px) {
-    .nav-links { width: 100%; margin-left: 0; order: 3; justify-content: flex-start; }
-    .hero { padding-top: 44px; }
-    section { padding-top: 48px; }
-  }
-</style>
+<link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
 <header class="nav">
   <div class="nav-inner">
-    <a class="brand" href="#">Je0on<span class="dot">.</span></a>
+    <a class="brand" href="index.html">Je0on<span class="dot">.</span></a>
     <nav class="nav-links">
-      <a href="#about">关于</a>
-      <a href="#projects">项目</a>
-      <a href="#tools">工具</a>
-      <a href="#notes">笔记</a>
-      <a href="#contact">联系</a>
+      <a href="index.html">首页</a>
+      <a href="about.html">关于</a>
+      <a href="projects.html">项目</a>
+      <a href="tools.html">工具</a>
+      <a href="notes.html">笔记</a>
+      <a href="contact.html">联系</a>
     </nav>
     <button class="theme-btn" id="themeBtn" title="切换主题" aria-label="切换主题">🌙</button>
   </div>
@@ -205,7 +27,7 @@
 
 <main>
 
-  <!-- ============ Hero ============ -->
+  <!-- ================= Hero ================= -->
   <section class="hero">
     <div class="avatar">J</div>
     <h1>你好,我是 <span class="grad">Je0on</span></h1>
@@ -214,128 +36,96 @@
       以及路由器 / 内网相关的自建服务。
     </p>
     <div class="hero-actions">
-      <a class="btn primary" href="#projects">看看我的项目 →</a>
+      <a class="btn primary" href="projects.html">看看我的项目 →</a>
       <a class="btn" href="https://github.com/Je0on" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="contact.html">联系我</a>
     </div>
   </section>
 
-  <!-- ============ 关于 ============ -->
-  <section id="about">
-    <div class="sec-head"><h2>关于</h2><span class="en">About</span></div>
-    <div class="about-grid">
-      <div class="stat"><div class="k">AI API</div><div class="v">Gemini / Groq / OpenAI 协议互转</div></div>
-      <div class="stat"><div class="k">Serverless</div><div class="v">Cloudflare Workers · Vercel</div></div>
-      <div class="stat"><div class="k">Networking</div><div class="v">路由器插件 · 内网穿透 · 反向代理</div></div>
+  <!-- ================= 快捷入口 ================= -->
+  <section>
+    <div class="sec-head"><h2>快速导航</h2><span class="en">Explore</span></div>
+    <div class="links">
+      <a class="link-card" href="about.html">
+        <span class="ico">👤</span>
+        <span class="meta">关于我<small>方向与技能</small></span>
+      </a>
+      <a class="link-card" href="projects.html">
+        <span class="ico">📦</span>
+        <span class="meta">项目<small>做过的工具</small></span>
+      </a>
+      <a class="link-card" href="tools.html">
+        <span class="ico">🧰</span>
+        <span class="meta">工具与链接<small>常用入口</small></span>
+      </a>
+      <a class="link-card" href="notes.html">
+        <span class="ico">📝</span>
+        <span class="meta">笔记<small>更新记录</small></span>
+      </a>
     </div>
-    <p style="color:var(--muted);margin-top:20px;font-size:15px;">
-      这里记录我做过的工具和踩过的坑。内容会不定期更新 ——
-      <em>这段文字可以随意改写,直接编辑仓库里的 <code style="background:var(--bg-soft);border:1px solid var(--border);padding:1px 6px;border-radius:6px;">index.html</code> 即可。</em>
-    </p>
   </section>
 
-  <!-- ============ 项目 ============ -->
-  <section id="projects">
-    <div class="sec-head"><h2>项目</h2><span class="en">Projects</span></div>
+  <!-- ================= 精选项目 ================= -->
+  <section>
+    <div class="sec-head"><h2>精选项目</h2><span class="en">Featured</span></div>
     <div class="grid">
 
       <article class="card">
         <h3><a href="https://github.com/Je0on/gemini" target="_blank" rel="noopener">gemini</a></h3>
         <p>Gemini 相关的接口实验与封装,用于把 Gemini 能力接入到兼容 OpenAI 的调用方式里。</p>
-        <div class="tags">
-          <span class="tag lang">JavaScript</span>
-          <span class="tag">Gemini</span>
-          <span class="tag">API</span>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag lang">JavaScript</span>
+            <span class="tag">Gemini</span>
+          </div>
         </div>
       </article>
 
       <article class="card">
         <h3><a href="https://github.com/Je0on/Groq-API-CloudflareWorker" target="_blank" rel="noopener">Groq-API-CloudflareWorker</a></h3>
         <p>把 Groq API 部署到 Cloudflare Workers 上的转发层,零服务器、全球边缘节点,低延迟调用大模型。</p>
-        <div class="tags">
-          <span class="tag lang">JavaScript</span>
-          <span class="tag">Cloudflare Workers</span>
-          <span class="tag">Groq</span>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag lang">JavaScript</span>
+            <span class="tag">Workers</span>
+            <span class="tag">Groq</span>
+          </div>
         </div>
       </article>
 
       <article class="card">
         <h3><a href="https://github.com/Je0on/openai-gemini" target="_blank" rel="noopener">openai-gemini</a></h3>
         <p>✦ Gemini ➜ OpenAI API 代理。把 Gemini 包装成 OpenAI 兼容接口,任意支持 OpenAI 协议的客户端都能直接用。</p>
-        <div class="tags">
-          <span class="tag lang">JavaScript</span>
-          <span class="tag">Serverless</span>
-          <span class="tag">Proxy</span>
-          <span class="tag"><a href="https://my-openai-gemini-demo.vercel.app/" target="_blank" rel="noopener">Demo ↗</a></span>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag lang">JavaScript</span>
+            <span class="tag">Proxy</span>
+          </div>
         </div>
       </article>
 
-      <article class="card">
-        <h3>待补充</h3>
-        <p>这里可以放新项目。复制上面任意一个 <code>&lt;article class="card"&gt;</code> 区块改内容即可。</p>
-        <div class="tags"><span class="tag">占位</span></div>
-      </article>
-
     </div>
-  </section>
-
-  <!-- ============ 工具 ============ -->
-  <section id="tools">
-    <div class="sec-head"><h2>工具与链接</h2><span class="en">Tools</span></div>
-    <div class="links">
-      <a class="link-card" href="https://github.com/Je0on" target="_blank" rel="noopener">
-        <span class="ico">🐙</span>
-        <span class="meta">GitHub<small>@Je0on</small></span>
-      </a>
-      <a class="link-card" href="https://my-openai-gemini-demo.vercel.app/" target="_blank" rel="noopener">
-        <span class="ico">🔌</span>
-        <span class="meta">openai-gemini Demo<small>Vercel 部署示例</small></span>
-      </a>
-      <a class="link-card" href="https://dash.cloudflare.com/" target="_blank" rel="noopener">
-        <span class="ico">☁️</span>
-        <span class="meta">Cloudflare Dash<small>Workers / 隧道管理</small></span>
-      </a>
-      <a class="link-card" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">
-        <span class="ico">🔑</span>
-        <span class="meta">Gemini API Key<small>Google AI Studio</small></span>
-      </a>
-    </div>
-    <p style="color:var(--muted);margin-top:18px;font-size:14.5px;">
-      这些是常用入口,换成你自己的收藏即可。
+    <p style="margin-top:20px;">
+      <a class="btn" href="projects.html">查看全部项目 →</a>
     </p>
   </section>
 
-  <!-- ============ 笔记 ============ -->
-  <section id="notes">
-    <div class="sec-head"><h2>笔记</h2><span class="en">Notes</span></div>
+  <!-- ================= 最新笔记 ================= -->
+  <section>
+    <div class="sec-head"><h2>最新笔记</h2><span class="en">Latest</span></div>
     <ul class="list">
       <li>
         <span class="date">2026-11-05</span>
-        <span class="txt">网站改用 GitHub Pages 用户主页,地址固定为短链接 <a href="https://je0on.github.io">je0on.github.io</a>。</span>
+        <span class="txt">网站改为多页面结构,导航、样式与脚本统一抽到 <code>assets/</code> 目录。</span>
       </li>
       <li>
-        <span class="date">—</span>
-        <span class="txt">在仓库里新建 <code style="background:var(--bg-soft);border:1px solid var(--border);padding:1px 6px;border-radius:6px;">notes/xxx.md</code> 写 Markdown,GitHub 会自动渲染成网页。</span>
-      </li>
-      <li>
-        <span class="date">—</span>
-        <span class="txt">每新增一条,就在上面复制一行 <code style="background:var(--bg-soft);border:1px solid var(--border);padding:1px 6px;border-radius:6px;">&lt;li&gt;</code> 改内容。</span>
+        <span class="date">2026-11-05</span>
+        <span class="txt">启用 GitHub Pages 用户主页,网址固定为 <a href="https://je0on.github.io">je0on.github.io</a>。</span>
       </li>
     </ul>
-  </section>
-
-  <!-- ============ 联系 ============ -->
-  <section id="contact">
-    <div class="sec-head"><h2>联系</h2><span class="en">Contact</span></div>
-    <div class="links">
-      <a class="link-card" href="https://github.com/Je0on" target="_blank" rel="noopener">
-        <span class="ico">🐙</span>
-        <span class="meta">GitHub<small>github.com/Je0on</small></span>
-      </a>
-      <a class="link-card" href="mailto:someone@example.com">
-        <span class="ico">✉️</span>
-        <span class="meta">邮箱<small>改成你的邮箱后启用</small></span>
-      </a>
-    </div>
+    <p style="margin-top:20px;">
+      <a class="btn" href="notes.html">全部笔记 →</a>
+    </p>
   </section>
 
 </main>
@@ -345,25 +135,6 @@
   <br><span style="font-size:12.5px;">更新方式:<code>git add -A &amp;&amp; git commit -m "update" &amp;&amp; git push</code></span>
 </footer>
 
-<script>
-  (function () {
-    var root = document.documentElement;
-    var btn  = document.getElementById('themeBtn');
-    var saved = localStorage.getItem('theme');
-    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    var theme = saved || (prefersDark ? 'dark' : 'light');
-    function apply(t) {
-      root.setAttribute('data-theme', t);
-      btn.textContent = t === 'dark' ? '☀️' : '🌙';
-    }
-    apply(theme);
-    btn.addEventListener('click', function () {
-      theme = theme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('theme', theme);
-      apply(theme);
-    });
-    document.getElementById('year').textContent = new Date().getFullYear();
-  })();
-</script>
+<script src="assets/site.js"></script>
 </body>
 </html>

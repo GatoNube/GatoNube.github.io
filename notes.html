@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>笔记 · Je0on</title>
+<meta name="description" content="更新记录与随笔">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">Je0on<span class="dot">.</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="about.html">关于</a>
+      <a href="projects.html">项目</a>
+      <a href="tools.html">工具</a>
+      <a href="notes.html">笔记</a>
+      <a href="contact.html">联系</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" title="切换主题" aria-label="切换主题">🌙</button>
+  </div>
+</header>
+
+<main>
+
+  <div class="page-head">
+    <span class="en">Notes</span>
+    <h1>笔记</h1>
+    <p>站点更新记录、踩坑与随手记。</p>
+  </div>
+
+  <section style="padding-top:0;">
+    <ul class="list">
+      <li>
+        <span class="date">2026-11-05</span>
+        <span class="txt">
+          站点改为<strong>多页面结构</strong>:拆成首页 / 关于 / 项目 / 工具 / 笔记 / 联系 六个独立页面,
+          共享样式抽到 <code>assets/style.css</code>,脚本抽到 <code>assets/site.js</code>。
+        </span>
+      </li>
+      <li>
+        <span class="date">2026-11-05</span>
+        <span class="txt">
+          启用 <strong>GitHub Pages 用户主页</strong>,网址固定为短链接
+          <a href="https://je0on.github.io">je0on.github.io</a>;并删除旧的临时项目页仓库。
+        </span>
+      </li>
+      <li>
+        <span class="date">2026-11-05</span>
+        <span class="txt">
+          页面改版:顶部粘性导航 + 浅色/深色自动适配 + 卡片网格布局 + 自定义 404 页面。
+        </span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <div class="sec-head"><h2>踩坑记录</h2><span class="en">Gotchas</span></div>
+
+    <h3>GitHub Pages 用户主页 vs 项目页</h3>
+    <p>
+      用户主页的仓库名<strong>必须精确等于</strong> <code>&lt;用户名&gt;.github.io</code>,
+      网址就是 <code>https://用户名.github.io</code>;项目页则是任意仓库名,
+      网址多一层 <code>/仓库名</code>。用户主页仓库创建后 GitHub 会<strong>自动启用</strong> Pages,不用手动开。
+    </p>
+
+    <h3>部署"卡住"其实是在排队</h3>
+    <p>
+      推送后如果访问 404,不一定是失败。Pages 的 <code>build</code> 作业通常十几秒完成,
+      但 <code>deploy</code> 作业可能在运行器队列里等<strong>几十分钟</strong>。
+      用 <code>gh run list</code> 看状态比反复刷新网页更靠谱。
+    </p>
+
+    <h3>自定义 404 返回 404 状态码是正常的</h3>
+    <p>
+      上传 <code>404.html</code> 后,访问不存在的路径会渲染它,但 HTTP 状态码仍是 404 ——
+      这是规范行为,能让搜索引擎正确识别,同时给用户看到友好的页面。
+    </p>
+
+    <div class="note">
+      <strong>加一条笔记:</strong> 在 <code>notes.html</code> 的 <code>&lt;ul class="list"&gt;</code> 里
+      复制一个 <code>&lt;li&gt;</code> 改内容即可。日期用 <code>YYYY-MM-DD</code> 格式保持对齐。
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  © <span id="year">2026</span> Je0on · 由 <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> 托管
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

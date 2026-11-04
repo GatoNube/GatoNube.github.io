@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>关于 · Je0on</title>
+<meta name="description" content="关于 Je0on —— 方向、技能与在做的事">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">Je0on<span class="dot">.</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="about.html">关于</a>
+      <a href="projects.html">项目</a>
+      <a href="tools.html">工具</a>
+      <a href="notes.html">笔记</a>
+      <a href="contact.html">联系</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" title="切换主题" aria-label="切换主题">🌙</button>
+  </div>
+</header>
+
+<main>
+
+  <div class="page-head">
+    <span class="en">About</span>
+    <h1>关于</h1>
+    <p>一句话:喜欢把不顺手的东西改成顺手的样子。</p>
+  </div>
+
+  <section style="padding-top:0;">
+    <div class="about-grid">
+      <div class="stat"><div class="k">AI API</div><div class="v">Gemini / Groq / OpenAI 协议互转</div></div>
+      <div class="stat"><div class="k">Serverless</div><div class="v">Cloudflare Workers · Vercel</div></div>
+      <div class="stat"><div class="k">Networking</div><div class="v">路由器插件 · 内网穿透 · 反向代理</div></div>
+      <div class="stat"><div class="k">Self-hosted</div><div class="v">自建服务 · 容器化部署</div></div>
+    </div>
+  </section>
+
+  <section class="prose">
+    <div class="sec-head"><h2>我在做什么</h2><span class="en">Focus</span></div>
+    <p>
+      主要在做大模型接口的「搬运」工作 —— 把各家不同协议的 API 统一成好用的形式。
+      比如把 Gemini 包装成 OpenAI 兼容接口,这样任何支持 OpenAI 协议的客户端
+      (各种聊天前端、编辑器插件、自动化脚本)都能无感接入。
+    </p>
+    <p>
+      部署上偏好无服务器方案:Cloudflare Workers 免费额度足够个人使用,
+      而且全球边缘节点意味着调用延迟低。配合 Vercel 做一些演示前端也很方便。
+    </p>
+
+    <div class="sec-head"><h2>技能</h2><span class="en">Skills</span></div>
+    <ul>
+      <li><strong>语言</strong> · JavaScript / Node.js、Python、一点 Shell</li>
+      <li><strong>平台</strong> · Cloudflare Workers、Vercel、GitHub Actions</li>
+      <li><strong>接口</strong> · OpenAI / Gemini / Groq 协议适配与反向代理</li>
+      <li><strong>网络</strong> · 反向代理、内网穿透、路由器固件插件</li>
+      <li><strong>工具</strong> · Git、Docker、PowerShell 自动化</li>
+    </ul>
+
+    <div class="sec-head"><h2>这个站点</h2><span class="en">This Site</span></div>
+    <p>
+      纯静态站点,托管在 GitHub Pages,域名是 <a href="https://je0on.github.io">je0on.github.io</a>。
+      没有用任何框架和 CDN —— 只有一个 CSS 文件和一个 JS 文件,加载快、不受网络环境影响。
+    </p>
+    <div class="note">
+      <strong>想改内容?</strong> 直接编辑仓库里的 HTML 文件,然后
+      <code>git add -A &amp;&amp; git commit -m "update" &amp;&amp; git push</code>,
+      约 1 分钟后自动生效。
+    </div>
+    <p>
+      <a class="btn" href="projects.html">看看项目 →</a>
+      <a class="btn" href="contact.html">联系我</a>
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  © <span id="year">2026</span> Je0on · 由 <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> 托管
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
