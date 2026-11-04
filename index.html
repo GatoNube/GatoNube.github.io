@@ -13,7 +13,6 @@
 <header class="nav">
   <div class="nav-inner">
     <nav class="nav-links">
-      <a href="#status">网络</a>
       <a href="ip.html">IP 检测</a>
       <a href="#projects">项目</a>
       <a href="#tools">工具</a>
@@ -25,37 +24,6 @@
 <main>
 
   <h1 class="hero">GatoNube<span class="hero-cn">云猫</span></h1>
-
-  <!-- ==================== 网络 ==================== -->
-  <section id="status">
-    <div class="status-bar">
-      <span class="dot-live busy" id="statusDot"></span>
-      <span class="msg" id="statusMsg">等待检测…</span>
-      <button class="btn" id="statusRefresh" type="button">重新检测</button>
-    </div>
-
-    <h3 class="sub-h">你的网络</h3>
-    <div class="about-grid" id="netInfo">
-      <div class="stat"><div class="k" id="netIp">检测中…</div><div class="v">IP 地址</div></div>
-      <div class="stat"><div class="k" id="netLoc">检测中…</div><div class="v">地区</div></div>
-      <div class="stat"><div class="k" id="netIsp">检测中…</div><div class="v">运营商 / ASN</div></div>
-      <div class="stat"><div class="k" id="netTz">检测中…</div><div class="v">时区</div></div>
-    </div>
-
-    <h3 class="sub-h" style="margin-top:26px;">IP 纯净度检测</h3>
-    <div class="links">
-      <a class="link-card" href="ip.html">
-        <span class="ico">🛡️</span>
-        <span class="meta">IP 纯净度 · Claude 可用性<small>出口 IP 属性 / 风控标记 / 信任评分 / DNS 出口 / 浏览器指纹</small></span>
-      </a>
-    </div>
-
-    <p class="hint">
-      「你的网络」由浏览器直接读取,只反映<b>你当前出口 IP</b> 的归属。
-      想知道这个 IP 能不能正常访问 Claude、有没有被标记成机房或代理,请进
-      <a href="ip.html">IP 纯净度检测</a>。
-    </p>
-  </section>
 
   <!-- ==================== 项目 ==================== -->
   <section id="projects">
@@ -326,6 +294,5 @@
 </footer>
 
 <script src="assets/site.js"></script>
-<script src="assets/status.js"></script>
 </body>
 </html>
