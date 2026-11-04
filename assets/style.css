@@ -189,6 +189,28 @@ section { padding-top: 54px; }
 .link-card .meta { display: flex; flex-direction: column; line-height: 1.35; }
 .link-card .meta small { color: var(--muted); font-size: 12px; }
 
+/* 厂商 logo —— 本地图片,零外部依赖 */
+.link-card .ico img {
+  display: block; width: 20px; height: 20px;
+  border-radius: 4px; object-fit: contain;
+}
+/* 深色主题下给浅底 logo 垫一层白,避免黑logo消失在暗背景里 */
+html[data-theme="dark"] .link-card .ico img {
+  width: 18px; height: 18px; padding: 1px; background: #fff;
+}
+.link-card .ico .ico-fallback {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 4px;
+  background: var(--accent); color: #fff;
+  font-size: 11px; font-weight: 700;
+}
+
+/* 厂商链接卡:条目多,排布更紧凑 */
+.links.compact { gap: 9px; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); }
+.links.compact .link-card { gap: 9px; padding: 9px 11px; border-radius: 10px; }
+.links.compact .link-card .meta { font-size: 13px; }
+.links.compact .link-card .meta small { font-size: 11px; }
+
 /* ---------------- 正文排版 ---------------- */
 .prose { max-width: 72ch; }
 .prose h2 { font-size: 20px; margin: 34px 0 12px; }
