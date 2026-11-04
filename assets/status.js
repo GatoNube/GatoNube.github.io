@@ -1,27 +1,66 @@
-/* Je0on · 当前网络状况
+/* 当前网络状况
    全部检测在浏览器本地发起,反映的是「访问者当前网络」的连通性。 */
 (function () {
   'use strict';
 
-  var grid = document.getElementById('probeGrid');
-  if (!grid) { return; }
+  var host = document.getElementById('probeGroups');
+  if (!host) { return; }
 
-  /* ================= 待检测的服务 ================= */
-  var SERVICES = [
-    { name: 'Google Gemini API', url: 'https://generativelanguage.googleapis.com/', tag: 'Gemini' },
-    { name: 'Google AI Studio',  url: 'https://aistudio.google.com/',                tag: 'Gemini' },
-    { name: 'OpenAI API',        url: 'https://api.openai.com/',                     tag: 'OpenAI' },
-    { name: 'Groq API',          url: 'https://api.groq.com/',                       tag: 'Groq' },
-    { name: 'OpenRouter',        url: 'https://openrouter.ai/',                      tag: '聚合网关' },
-    { name: 'Cloudflare',        url: 'https://www.cloudflare.com/cdn-cgi/trace',    tag: 'CDN' },
-    { name: 'Vercel',            url: 'https://vercel.com/',                         tag: '部署' },
-    { name: 'GitHub',            url: 'https://github.com/',                         tag: '代码托管' },
-    { name: 'Vercel Demo',       url: 'https://my-openai-gemini-demo.vercel.app/',   tag: '我的项目' }
+  /* ================= 待检测的服务(按分组) ================= */
+  var GROUPS = [
+    {
+      title: '海外 AI 厂商',
+      items: [
+        { n: 'OpenAI',              u: 'https://api.openai.com/' },
+        { n: 'Anthropic Claude',    u: 'https://api.anthropic.com/' },
+        { n: 'Google Gemini',       u: 'https://generativelanguage.googleapis.com/' },
+        { n: 'Google AI Studio',    u: 'https://aistudio.google.com/' },
+        { n: 'xAI Grok',            u: 'https://api.x.ai/' },
+        { n: 'Mistral AI',          u: 'https://api.mistral.ai/' },
+        { n: 'Cohere',              u: 'https://api.cohere.com/' },
+        { n: 'Groq',                u: 'https://api.groq.com/' },
+        { n: 'Together AI',         u: 'https://api.together.xyz/' },
+        { n: 'Fireworks AI',        u: 'https://api.fireworks.ai/' },
+        { n: 'Perplexity',          u: 'https://api.perplexity.ai/' },
+        { n: 'NVIDIA NIM',          u: 'https://integrate.api.nvidia.com/' },
+        { n: 'Hugging Face',        u: 'https://huggingface.co/' },
+        { n: 'Replicate',           u: 'https://api.replicate.com/' },
+        { n: 'Stability AI',        u: 'https://api.stability.ai/' },
+        { n: 'OpenRouter',          u: 'https://openrouter.ai/' }
+      ]
+    },
+    {
+      title: '国内 AI 厂商',
+      items: [
+        { n: 'DeepSeek 深度求索',     u: 'https://api.deepseek.com/' },
+        { n: '月之暗面 Kimi',        u: 'https://api.moonshot.cn/' },
+        { n: '阿里通义千问',          u: 'https://dashscope.aliyuncs.com/' },
+        { n: '智谱 GLM',            u: 'https://open.bigmodel.cn/' },
+        { n: '百度文心一言',          u: 'https://aip.baidubce.com/' },
+        { n: '腾讯混元',             u: 'https://hunyuan.tencentcloudapi.com/' },
+        { n: '字节豆包 Doubao',      u: 'https://ark.cn-beijing.volces.com/' },
+        { n: '讯飞星火',             u: 'https://spark-api-open.xf-yun.com/' },
+        { n: 'MiniMax',             u: 'https://api.minimaxi.com/' },
+        { n: '零一万物 Yi',          u: 'https://api.lingyiwanwu.com/' },
+        { n: '硅基流动 SiliconFlow', u: 'https://api.siliconflow.cn/' },
+        { n: '阶跃星辰 StepFun',      u: 'https://api.stepfun.com/' },
+        { n: '百川智能',             u: 'https://api.baichuan-ai.com/' }
+      ]
+    },
+    {
+      title: '基础服务',
+      items: [
+        { n: 'Cloudflare',          u: 'https://www.cloudflare.com/cdn-cgi/trace' },
+        { n: 'Vercel',              u: 'https://vercel.com/' },
+        { n: 'GitHub',              u: 'https://github.com/' },
+        { n: 'Vercel Demo(我的)',    u: 'https://my-openai-gemini-demo.vercel.app/' }
+      ]
+    }
   ];
 
-  var TIMEOUT = 7000;   /* 单次探测超时(毫秒) */
+  var TIMEOUT = 6000;   /* 单次探测超时(毫秒) */
 
-  /* ================= 工具函数 ================= */
+  /* ================= 探测 ================= */
   function probe(url) {
     return new Promise(function (resolve) {
       var ctrl = ('AbortController' in window) ? new AbortController() : null;
@@ -50,38 +89,33 @@
     });
   }
 
-  /* ================= 渲染:服务可达性 ================= */
-  function renderSkeleton() {
-    grid.innerHTML = SERVICES.map(function (s, i) {
-      return '<article class="card probe" id="probe-' + i + '">' +
-               '<h3>' + s.name + '</h3>' +
-               '<p class="probe-host">' + s.url.replace(/^https?:\/\//, '').replace(/\/.*$/, '') + '</p>' +
-               '<div class="card-foot">' +
-                 '<div class="tags">' +
-                   '<span class="tag">' + s.tag + '</span>' +
-                   '<span class="tag badge pending" id="badge-' + i + '">检测中…</span>' +
-                 '</div>' +
-               '</div>' +
-             '</article>';
-    }).join('');
+  /* ================= 渲染骨架 ================= */
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  function setBadge(i, res) {
-    var el = document.getElementById('badge-' + i);
-    var card = document.getElementById('probe-' + i);
+  function renderSkeleton() {
+    var html = '';
+    GROUPS.forEach(function (g, gi) {
+      html += '<h3 class="sub-h">' + esc(g.title) + '</h3>';
+      html += '<div class="probe-grid">';
+      g.items.forEach(function (it, ii) {
+        html += '<div class="probe-item pending" id="p_' + gi + '_' + ii + '" title="' + esc(it.u) + '">' +
+                  '<span class="nm">' + esc(it.n) + '</span>' +
+                  '<span class="st">···</span>' +
+                '</div>';
+      });
+      html += '</div>';
+    });
+    host.innerHTML = html;
+  }
+
+  function setItem(gi, ii, res) {
+    var el = document.getElementById('p_' + gi + '_' + ii);
     if (!el) { return; }
     el.classList.remove('pending', 'ok', 'fail');
-    if (res.ok) {
-      el.classList.add('ok');
-      el.textContent = '可达 · ' + res.ms + ' ms';
-    } else {
-      el.classList.add('fail');
-      el.textContent = res.reason || '不可达';
-    }
-    if (card) {
-      card.classList.remove('is-ok', 'is-fail');
-      card.classList.add(res.ok ? 'is-ok' : 'is-fail');
-    }
+    el.classList.add(res.ok ? 'ok' : 'fail');
+    el.querySelector('.st').textContent = res.ok ? (res.ms + ' ms') : (res.reason || '不可达');
   }
 
   /* ================= 访问者网络信息 ================= */
@@ -186,33 +220,37 @@
     var btn = document.getElementById('statusRefresh');
     if (btn) { btn.disabled = true; }
 
+    var total = GROUPS.reduce(function (a, g) { return a + g.items.length; }, 0);
+
     renderSkeleton();
-    setSummary('正在检测 ' + SERVICES.length + ' 个服务的可达性…', 'busy');
+    setSummary('正在检测 ' + total + ' 个服务的可达性…', 'busy');
 
     var t0 = (window.performance && performance.now) ? performance.now() : Date.now();
 
     loadGeo();
     loadTz();
 
-    var done = 0, okCount = 0;
-    SERVICES.forEach(function (s, i) {
-      probe(s.url).then(function (res) {
-        setBadge(i, res);
-        done++;
-        if (res.ok) { okCount++; }
-        if (done === SERVICES.length) {
-          var now = (window.performance && performance.now) ? performance.now() : Date.now();
-          var total = ((now - t0) / 1000).toFixed(1);
-          var allOk = okCount === SERVICES.length;
-          var noneOk = okCount === 0;
-          setSummary(
-            okCount + ' / ' + SERVICES.length + ' 个服务可达 · 总耗时 ' + total + ' 秒' +
-            (noneOk ? ' · 当前网络似乎无法直连这些服务' :
-             (!allOk ? ' · 部分服务不可达,可能需要代理' : ' · 全部可达')),
-            allOk ? 'ok' : (noneOk ? 'fail' : 'busy')
-          );
-          if (btn) { btn.disabled = false; }
-        }
+    var done = 0, okCount = 0, unreachable = [];
+
+    GROUPS.forEach(function (g, gi) {
+      g.items.forEach(function (it, ii) {
+        probe(it.u).then(function (res) {
+          setItem(gi, ii, res);
+          done++;
+          if (res.ok) { okCount++; } else { unreachable.push(it.n); }
+          if (done === total) {
+            var now = (window.performance && performance.now) ? performance.now() : Date.now();
+            var secs = ((now - t0) / 1000).toFixed(1);
+            var allOk = okCount === total;
+            var noneOk = okCount === 0;
+            var extra = allOk ? ' · 全部可达'
+                      : (noneOk ? ' · 当前网络无法直连这些服务' : ' · 部分不可达,可能需要代理');
+            setSummary(okCount + ' / ' + total + ' 个服务可达 · 耗时 ' + secs + ' 秒' + extra,
+                       allOk ? 'ok' : (noneOk ? 'fail' : 'busy'));
+            if (btn) { btn.disabled = false; }
+            host.setAttribute('data-unreachable', unreachable.join('|'));
+          }
+        });
       });
     });
   }
@@ -220,7 +258,6 @@
   var btn = document.getElementById('statusRefresh');
   if (btn) { btn.addEventListener('click', run); }
 
-  /* 页面加载后自动检测一次 */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', run);
   } else {
