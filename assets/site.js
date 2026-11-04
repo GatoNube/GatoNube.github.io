@@ -1,4 +1,4 @@
-/* Je0on · 个人主页 共享脚本 */
+/* GatoNube · 个人主页 共享脚本 */
 (function () {
   'use strict';
 
