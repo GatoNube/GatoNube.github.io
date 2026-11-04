@@ -217,6 +217,18 @@ html[data-theme="dark"] .link-card .ico img {
 .lead { max-width: 74ch; color: var(--muted); font-size: 14.5px; line-height: 1.75; margin: 0 0 20px; }
 .nav-links a.active { color: var(--accent); font-weight: 600; }
 
+/* 首页超大标题 */
+.hero {
+  font-size: clamp(44px, 10.5vw, 128px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -.035em;
+  margin: 6px 0 34px;
+  color: var(--text);
+  word-break: break-word;
+}
+.hero .hero-cn { color: var(--accent); margin-left: .08em; }
+
 /* 键值行 */
 .kv-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); }
 .kv-item {

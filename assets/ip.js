@@ -5,14 +5,53 @@
 
   var TIMEOUT = 9000;
 
-  /* Claude 不支持地区(高置信度子集)。完整名单以 Anthropic 官方为准。 */
-  var CLAUDE_BLOCKED = {
-    CN: '中国大陆', HK: '中国香港', MO: '中国澳门',
-    RU: '俄罗斯', BY: '白俄罗斯',
-    KP: '朝鲜', IR: '伊朗', SY: '叙利亚', CU: '古巴', VE: '委内瑞拉',
-    AF: '阿富汗', MM: '缅甸', LY: '利比亚', SD: '苏丹',
-    SO: '索马里', YE: '也门', SS: '南苏丹', ER: '厄立特里亚'
+  /* ==================== Claude 支持地区判定 ====================
+     数据来源:Anthropic《Supported Regions Policy》官方名单(185 个地区)
+       https://www.anthropic.com/legal/supported-regions
+     原文两句话决定了判定规则:
+       "Territories and dependencies of a listed country are also supported."
+       "Any country or region not listed is unsupported."
+     所以分两层:
+       ① 明确未列入的地区          -> 不支持
+       ② 未列入、但属于支持国的属地 -> 跟随母国,视为支持 */
+
+  var CLAUDE_UNSUPPORTED = {
+    AF: '阿富汗', AQ: '南极洲', BY: '白俄罗斯', CN: '中国',
+    CU: '古巴', HK: '香港', IR: '伊朗', KP: '朝鲜',
+    MO: '澳门', MM: '缅甸', RU: '俄罗斯', SY: '叙利亚',
+    VE: '委内瑞拉', EH: '西撒哈拉', YE: '也门', XK: '科索沃'
   };
+
+  /* 未列入官方名单、但属于某支持国的属地 / 自治领 -> 母国代码 */
+  var CLAUDE_TERRITORY = {
+    AS: 'US', GU: 'US', MP: 'US', PR: 'US', UM: 'US', VI: 'US',
+    AI: 'GB', BM: 'GB', FK: 'GB', GI: 'GB', IO: 'GB', KY: 'GB',
+    MS: 'GB', PN: 'GB', SH: 'GB', GS: 'GB', TC: 'GB', VG: 'GB',
+    GG: 'GB', IM: 'GB', JE: 'GB',
+    AW: 'NL', BQ: 'NL', CW: 'NL', SX: 'NL',
+    GF: 'FR', GP: 'FR', MQ: 'FR', YT: 'FR', NC: 'FR', PF: 'FR',
+    RE: 'FR', TF: 'FR', WF: 'FR', BL: 'FR', MF: 'FR', PM: 'FR',
+    AX: 'FI', FO: 'DK', GL: 'DK', SJ: 'NO', BV: 'NO',
+    CX: 'AU', CC: 'AU', HM: 'AU', NF: 'AU',
+    CK: 'NZ', NU: 'NZ', TK: 'NZ'
+  };
+
+  /* 判定结果:{ supported: 布尔, note: 说明 } */
+  function claudeRegion(cc) {
+    cc = (cc || '').toUpperCase();
+    if (!cc) { return { supported: false, note: '未识别到国家代码' }; }
+    if (CLAUDE_UNSUPPORTED[cc]) {
+      return { supported: false, note: CLAUDE_UNSUPPORTED[cc] + ' 不在 Anthropic 名单内' };
+    }
+    var parent = CLAUDE_TERRITORY[cc];
+    if (parent) {
+      if (CLAUDE_UNSUPPORTED[parent]) {
+        return { supported: false, note: '属地,母国不在名单内' };
+      }
+      return { supported: true, note: '属地,随母国 ' + parent + ' 视为支持' };
+    }
+    return { supported: true, note: '' };
+  }
 
   var P = {};                                   /* 收集到的全部数据 */
   var GEO_CHAIN = ['https://ipwho.is/', 'https://ipinfo.io/json'];
@@ -107,12 +146,14 @@
 
   function renderIP() {
     var cc = (P.countryCode || '').toUpperCase();
-    var blocked = cc && CLAUDE_BLOCKED[cc];
+    var reg = claudeRegion(cc);
     kv('ipOverview', [
       ['出口 IP', P.ip, ''],
       ['IP 版本', P.isV6Addr ? 'IPv6' : 'IPv4', P.isV6Addr ? 'warn' : 'ok'],
       ['国家 / 地区', (P.country || '未知') + (cc ? ' (' + cc + ')' : ''),
-        cc ? (blocked ? 'bad' : 'ok') : ''],
+        cc ? (reg.supported ? 'ok' : 'bad') : ''],
+      ['Claude 支持', cc ? (reg.supported ? '支持' : '不支持') : '未知',
+        cc ? (reg.supported ? 'ok' : 'bad') : ''],
       ['城市 / 区域', [P.region, P.city].filter(Boolean).join(' · ') || '未知', ''],
       ['ASN', P.asnNum ? ('AS' + P.asnNum) : '未知', ''],
       ['运营商 / 组织', P.org || '未知', '']
@@ -419,10 +460,12 @@
 
     var cc = (P.countryCode || '').toUpperCase();
     if (cc) {
-      if (CLAUDE_BLOCKED[cc]) {
-        cut('出口地区不在 Claude 支持名单', -55, P.country + ' (' + cc + ')', 'bad');
+      var reg = claudeRegion(cc);
+      var where = (P.country || cc) + ' (' + cc + ')' + (reg.note ? ' · ' + reg.note : '');
+      if (reg.supported) {
+        keep('出口地区在 Claude 支持名单内', where, 'ok');
       } else {
-        keep('出口地区在 Claude 支持名单内', P.country + ' (' + cc + ')', 'ok');
+        cut('出口地区不在 Claude 支持名单', -55, where, 'bad');
       }
     }
 
