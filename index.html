@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Je0on</title>
+<title>个人主页</title>
 <meta name="description" content="AI API 代理、Cloudflare Workers 与网络工具">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
 <link rel="stylesheet" href="assets/style.css">
@@ -13,6 +13,7 @@
 <header class="nav">
   <div class="nav-inner">
     <nav class="nav-links">
+      <a href="#status">网络</a>
       <a href="#projects">项目</a>
       <a href="#tools">工具</a>
     </nav>
@@ -21,6 +22,38 @@
 </header>
 
 <main>
+
+  <!-- ==================== 当前网络状况 ==================== -->
+  <section id="status">
+    <div class="sec-head"><h2>当前网络状况</h2><span class="en">Network Status</span></div>
+
+    <div class="status-bar">
+      <span class="dot-live busy" id="statusDot"></span>
+      <span class="msg" id="statusMsg">等待检测…</span>
+      <button class="btn" id="statusRefresh" type="button">重新检测</button>
+    </div>
+
+    <h3 class="sub-h">你的网络</h3>
+    <div class="about-grid" id="netInfo">
+      <div class="stat"><div class="k" id="netIp">检测中…</div><div class="v">IP 地址</div></div>
+      <div class="stat"><div class="k" id="netLoc">检测中…</div><div class="v">地区</div></div>
+      <div class="stat"><div class="k" id="netIsp">检测中…</div><div class="v">运营商 / ASN</div></div>
+      <div class="stat"><div class="k" id="netTz">检测中…</div><div class="v">时区</div></div>
+    </div>
+
+    <h3 class="sub-h">服务可达性</h3>
+    <div class="grid" id="probeGrid">
+      <article class="card probe">
+        <h3>正在准备检测…</h3>
+        <p class="probe-host">请稍候</p>
+      </article>
+    </div>
+
+    <p class="hint">
+      所有检测都在你的浏览器里直接发起,结果反映的是<b>你当前网络</b>能否连通这些服务,
+      与本站无关。若多项显示不可达,通常说明当前网络需要代理才能访问这些服务。
+    </p>
+  </section>
 
   <!-- ==================== 项目 ==================== -->
   <section id="projects">
@@ -94,11 +127,11 @@
   <section id="tools">
     <div class="sec-head"><h2>工具与链接</h2><span class="en">Tools &amp; Links</span></div>
 
-    <h3 style="font-size:15px;color:var(--muted);margin:0 0 12px;">我的项目</h3>
+    <h3 class="sub-h" style="margin-top:0;">我的项目</h3>
     <div class="links">
       <a class="link-card" href="https://github.com/Je0on" target="_blank" rel="noopener">
         <span class="ico">🐙</span>
-        <span class="meta">GitHub<small>@Je0on</small></span>
+        <span class="meta">GitHub<small>代码仓库</small></span>
       </a>
       <a class="link-card" href="https://my-openai-gemini-demo.vercel.app/" target="_blank" rel="noopener">
         <span class="ico">🔌</span>
@@ -110,7 +143,7 @@
       </a>
     </div>
 
-    <h3 style="font-size:15px;color:var(--muted);margin:28px 0 12px;">大模型服务</h3>
+    <h3 class="sub-h">大模型服务</h3>
     <div class="links">
       <a class="link-card" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">
         <span class="ico">💎</span>
@@ -130,7 +163,7 @@
       </a>
     </div>
 
-    <h3 style="font-size:15px;color:var(--muted);margin:28px 0 12px;">部署与网络</h3>
+    <h3 class="sub-h">部署与网络</h3>
     <div class="links">
       <a class="link-card" href="https://dash.cloudflare.com/" target="_blank" rel="noopener">
         <span class="ico">☁️</span>
@@ -154,10 +187,11 @@
 </main>
 
 <footer>
-  © <span id="year">2026</span> Je0on · 由 <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> 托管
+  © <span id="year">2026</span> · 由 <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> 托管
   <br><span style="font-size:12.5px;">更新方式:<code>git add -A &amp;&amp; git commit -m "update" &amp;&amp; git push</code></span>
 </footer>
 
 <script src="assets/site.js"></script>
+<script src="assets/status.js"></script>
 </body>
 </html>
