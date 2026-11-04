@@ -1,4 +1,4 @@
-/* IP 纯净度检测 —— 参照 ip.net.coffee/claude 的功能自行实现。
+/* IP 纯净度检测 —— 出口 IP 属性、风控标记、Claude 可用性、DNS 出口与浏览器指纹。
    全部请求由浏览器直接发起,不经任何中间服务器;检测结果不存储、不上传。 */
 (function () {
   'use strict';
@@ -138,6 +138,9 @@
         }
         P.tzFromApi = (d.timezone && d.timezone.id) || d.timezone || '';
         renderIP();
+        /* 指纹里「时区是否与 IP 匹配」依赖 P.tzFromApi,
+           而指纹在 run() 里是同步先渲染一次的,这里拿到时区后必须再渲染一遍。 */
+        renderFingerprint();
         return P.ip;
       }).catch(function () { return next(); });
     }
@@ -316,68 +319,127 @@
     });
   }
 
-  /* ==================== 6. WebRTC 泄漏 ==================== */
-  function loadWebRTC() {
+  /* ==================== 6. WebRTC 泄漏 ====================
+     实测这批 STUN 服务器在本机全部可通,国内三台延迟仅约 35ms:
+       stun.miwifi.com / stun.chat.bilibili.com / stun.hitv.com
+       stun.cloudflare.com / stun.l.google.com / stun.nextcloud.com:443 / turn.cloudflare.com
+     任意一台返回 srflx 候选即可拿到 WebRTC 的真实公网地址。
+     注意:STUN 走 UDP,被代理 / VPN / 防火墙拦截时会集体失败。
+     那种情况如实说明原因并提示重试,不假装检测通过。 */
+  var STUN_SERVERS = [
+    'stun:stun.miwifi.com:3478',
+    'stun:stun.chat.bilibili.com:3478',
+    'stun:stun.hitv.com:3478',
+    'stun:stun.cloudflare.com:3478',
+    'stun:stun.l.google.com:19302',
+    'stun:stun.nextcloud.com:443',
+    'stun:turn.cloudflare.com:3478'
+  ];
+
+  function gatherOnce(urls, timeoutMs) {
     return new Promise(function (resolve) {
-      if (!window.RTCPeerConnection) {
-        kv('leakGrid', [['WebRTC', '浏览器不支持', 'mute']]);
-        resolve(); return;
-      }
-      var found = { local: [], pub: [] };
       var pc;
       try {
         pc = new RTCPeerConnection({
-          iceServers: [
-            { urls: 'stun:stun.cloudflare.com:3478' },
-            { urls: 'stun:stun.nextcloud.com:443' }
-          ]
+          iceServers: urls.map(function (u) { return { urls: u }; })
         });
       } catch (e) {
-        kv('leakGrid', [['WebRTC', '初始化失败', 'warn']]);
-        resolve(); return;
+        resolve({ local: [], pub: [], why: 'RTCPeerConnection 初始化失败' });
+        return;
       }
-      var done = false;
-      function finish() {
+      var local = [], pub = [], state = '', done = false;
+
+      function finish(why) {
+        if (done) { return; }
+        done = true;
+        clearTimeout(guard);
         try { pc.close(); } catch (e) {}
-        var leaked = found.pub.filter(function (ip) {
-          return P.ip && ip !== P.ip;
-        });
-        kv('leakGrid', [
-          ['WebRTC 本地地址', found.local.join(', ') || '未暴露(已保护)',
-            found.local.length ? 'warn' : 'ok'],
-          ['WebRTC 公网地址', found.pub.join(', ') || '未获取到', ''],
-          ['与 HTTP 出口是否一致',
-            found.pub.length ? (leaked.length ? '不一致,存在泄漏' : '一致') : '无法判断',
-            found.pub.length ? (leaked.length ? 'bad' : 'ok') : '']
-        ]);
-        resolve();
+        resolve({ local: local, pub: pub, state: state, why: why });
       }
-      var guard = setTimeout(function () {
-        if (!done) { done = true; finish(); }
-      }, 6000);
+
+      var guard = setTimeout(function () { finish('收集超时'); }, timeoutMs);
+
+      pc.onicegatheringstatechange = function () {
+        try { state = pc.iceGatheringState; } catch (e) {}
+      };
 
       pc.onicecandidate = function (e) {
-        if (!e || !e.candidate) {
-          if (!done) { done = true; clearTimeout(guard); finish(); }
-          return;
-        }
+        if (!e || !e.candidate) { finish('收集完成'); return; }
         var s = e.candidate.candidate || '';
         var m = /([0-9a-fA-F:.]+)\s+\d+\s+typ\s+(host|srflx|prflx|relay)/i.exec(s);
         if (m) {
           var ip = m[1], kind = m[2].toLowerCase();
-          if (kind === 'host' && found.local.indexOf(ip) < 0) { found.local.push(ip); }
-          if ((kind === 'srflx' || kind === 'prflx') && found.pub.indexOf(ip) < 0) { found.pub.push(ip); }
-        } else if (/\.local/i.test(s) && found.local.indexOf('mDNS 已隐藏') < 0) {
-          found.local.push('mDNS 已隐藏');
+          if (kind === 'host' && local.indexOf(ip) < 0) { local.push(ip); }
+          if ((kind === 'srflx' || kind === 'prflx') && pub.indexOf(ip) < 0) {
+            pub.push(ip);
+            finish('拿到公网候选');   /* 一拿到就收工,不必等收集跑完 */
+          }
+        } else if (/\.local\b/i.test(s) && local.indexOf('mDNS 已隐藏') < 0) {
+          local.push('mDNS 已隐藏');
         }
       };
+
       try {
         pc.createDataChannel('gn');
-        pc.createOffer().then(function (o) { return pc.setLocalDescription(o); })
-          .catch(function () { if (!done) { done = true; clearTimeout(guard); finish(); } });
+        pc.createOffer()
+          .then(function (o) { return pc.setLocalDescription(o); })
+          .catch(function (err) {
+            finish('createOffer 失败:' + ((err && err.message) || err));
+          });
       } catch (e) {
-        if (!done) { done = true; clearTimeout(guard); finish(); }
+        finish('异常:' + e.message);
       }
+    });
+  }
+
+  function renderLeak(r) {
+    var local = (r && r.local) || [];
+    var pub = (r && r.pub) || [];
+    var rows;
+
+    if (!r) {
+      rows = [['WebRTC', '浏览器不支持', 'mute']];
+    } else if (pub.length) {
+      var hit = P.ip ? (pub.indexOf(P.ip) >= 0) : null;
+      rows = [
+        ['WebRTC 本地地址', local.join(', ') || '未暴露(mDNS 已保护)',
+          local.length ? 'warn' : 'ok'],
+        ['WebRTC 公网地址', pub.join(', '), 'ok'],
+        ['与 HTTP 出口是否一致',
+          hit === null ? '无法比对' : (hit ? '一致 · 未泄漏' : '不一致 · 存在泄漏'),
+          hit === null ? '' : (hit ? 'ok' : 'bad')],
+        ['ICE 收集', (r.state || '未知') + (r.why ? ' · ' + r.why : ''), '']
+      ];
+    } else {
+      rows = [
+        ['WebRTC 本地地址', local.join(', ') || '未暴露(mDNS 已保护)',
+          local.length ? 'warn' : 'ok'],
+        ['WebRTC 公网地址', '未能取得', 'warn'],
+        ['STUN 是否可达', '否 · ' + (r.why || '未知原因'), 'warn'],
+        ['说明', 'STUN 走 UDP,开启代理 / VPN 时可能被拦;关闭后点「重新检测」', '']
+      ];
+    }
+    kv('leakGrid', rows);
+  }
+
+  function loadWebRTC() {
+    if (!window.RTCPeerConnection) {
+      renderLeak(null);
+      return Promise.resolve();
+    }
+    /* 首次用全部服务器;没拿到就用国内低延迟的三台再试一次 */
+    return gatherOnce(STUN_SERVERS, 10000).then(function (r1) {
+      if (r1.pub.length) { return r1; }
+      return gatherOnce(STUN_SERVERS.slice(0, 3), 8000).then(function (r2) {
+        if (r2.pub.length) { return r2; }
+        if (!r2.local.length) { r2.local = r1.local; }
+        r2.why = r1.why || r2.why;
+        return r2;
+      });
+    }).then(function (r) {
+      renderLeak(r);
+    }).catch(function () {
+      renderLeak({ local: [], pub: [], why: '检测异常' });
     });
   }
 
@@ -426,10 +488,22 @@
     var uaData = navigator.userAgentData;
     var platform = (uaData && uaData.platform) || navigator.platform || '未知';
 
+    /* 时区一致性:两个值都拿到才能判定;缺哪个就直说是缺了哪个,不给含糊结论 */
+    var tzHit, tzVerdict, tzState;
+    if (P.tzFromApi && tz) {
+      tzHit = (tz === P.tzFromApi);
+      tzVerdict = tzHit ? '一致' : '不一致(建议对齐)';
+      tzState = tzHit ? 'ok' : 'warn';
+    } else if (P.tzFromApi) {
+      tzVerdict = '浏览器未报告时区'; tzState = 'warn';
+    } else {
+      tzVerdict = 'IP 接口未返回时区'; tzState = 'warn';
+    }
+
     var rows = [
-      ['时区', tz || '未知', P.tzFromApi && tz === P.tzFromApi ? 'ok' : 'warn'],
-      ['时区是否与 IP 匹配', (P.tzFromApi && tz) ? (tz === P.tzFromApi ? '一致' : '不一致(建议对齐)') : '无法判断',
-        (P.tzFromApi && tz) ? (tz === P.tzFromApi ? 'ok' : 'warn') : ''],
+      ['浏览器时区', tz || '未知', ''],
+      ['IP 所在时区', P.tzFromApi || '未知', ''],
+      ['时区是否与 IP 匹配', tzVerdict, tzState],
       ['语言', (navigator.language || '未知') + ' / ' + ((navigator.languages || []).join(', ') || '-'), ''],
       ['平台', platform, ''],
       ['CPU 核心数', navigator.hardwareConcurrency ? (navigator.hardwareConcurrency + ' 核') : '未知', ''],
@@ -549,7 +623,8 @@
     var rc = $('riskChips');
     if (rc) { rc.innerHTML = '<span class="chip mute">检测中…</span>'; }
 
-    /* 指纹是同步的,立刻渲染 */
+    /* 指纹同步可算,先渲染一遍让用户立刻看到;
+       「时区是否与 IP 匹配」需要等接口返回,loadIP 完成后会再渲染一次覆盖。 */
     renderFingerprint();
 
     var t0 = (window.performance && performance.now) ? performance.now() : Date.now();
