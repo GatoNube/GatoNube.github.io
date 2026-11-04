@@ -13,6 +13,7 @@
   <div class="nav-inner">
     <nav class="nav-links">
       <a href="#status">网络</a>
+      <a href="ip.html">IP 检测</a>
       <a href="#projects">项目</a>
       <a href="#tools">工具</a>
     </nav>
@@ -40,16 +41,18 @@
       <div class="stat"><div class="k" id="netTz">检测中…</div><div class="v">时区</div></div>
     </div>
 
-    <h3 class="sub-h" style="margin-top:26px;">服务可达性</h3>
-    <div id="probeGroups">
-      <div class="probe-grid">
-        <div class="probe-item pending"><span class="nm">正在准备检测…</span><span class="st">···</span></div>
-      </div>
+    <h3 class="sub-h" style="margin-top:26px;">IP 纯净度检测</h3>
+    <div class="links">
+      <a class="link-card" href="ip.html">
+        <span class="ico">🛡️</span>
+        <span class="meta">IP 纯净度 · Claude 可用性<small>出口 IP 属性 / 风控标记 / 信任评分 / DNS 出口 / 浏览器指纹</small></span>
+      </a>
     </div>
 
     <p class="hint">
-      所有检测都在你的浏览器里直接发起,结果反映的是<b>你当前网络</b>能否连通这些服务,
-      与本站无关。若多项显示不可达,通常说明当前网络需要代理才能访问这些服务。
+      「你的网络」由浏览器直接读取,只反映<b>你当前出口 IP</b> 的归属。
+      想知道这个 IP 能不能正常访问 Claude、有没有被标记成机房或代理,请进
+      <a href="ip.html">IP 纯净度检测</a>。
     </p>
   </section>
 
