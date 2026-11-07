@@ -122,7 +122,7 @@ section { padding-top: 54px; }
 .sec-head::after { content: ""; flex: 1; height: 1px; background: var(--border); margin-left: 6px; }
 
 /* ---------------- 卡片网格 ---------------- */
-.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(282px, 1fr)); }
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(246px, 1fr)); }
 .card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow);
@@ -147,6 +147,33 @@ section { padding-top: 54px; }
 .tag.lang::before {
   content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
   background: var(--accent-2); margin-right: 6px; vertical-align: 1px;
+}
+
+/* 项目卡片:整体收紧一号。只作用于首页 .grid，不影响其它页面 */
+.grid .card { padding: 16px; border-radius: 13px; }
+.grid .card h3 { margin-bottom: 7px; font-size: 17.5px; }
+.grid .card h3 a { min-width: 0; overflow-wrap: anywhere; }
+.grid .card p { margin-bottom: 12px; font-size: 13.5px; line-height: 1.6; }
+.grid .card .card-foot, .grid .tags { gap: 6px; }
+.grid .tag { font-size: 11.5px; padding: 2px 9px; }
+
+/* 项目卡:完整仓库路径 / Star / 类别标记。限定 .grid 作用域 */
+.grid .card .repo-owner {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 11px; line-height: 1.4; color: var(--muted); opacity: .85;
+  margin: -3px 0 10px;
+  overflow-wrap: anywhere;
+}
+.grid .tag.star {
+  color: var(--accent); font-weight: 600; background: transparent;
+  font-variant-numeric: tabular-nums;
+}
+.grid .tag.cat { background: var(--surface); }
+
+/* 区块说明:项目区顶部的一行数据来源注记 */
+.sec-note {
+  color: var(--muted); font-size: 13px; line-height: 1.6;
+  margin: -10px 0 18px;
 }
 
 /* ---------------- 统计块 ---------------- */
@@ -211,13 +238,7 @@ html[data-theme="dark"] .link-card .ico img {
 .links.compact .link-card .meta { font-size: 13px; }
 .links.compact .link-card .meta small { font-size: 11px; }
 
-/* ---------------- IP 检测页 ---------------- */
-.dot-live.warn { background: #eab308; }
-
-.lead { max-width: 74ch; color: var(--muted); font-size: 14.5px; line-height: 1.75; margin: 0 0 20px; }
-.nav-links a.active { color: var(--accent); font-weight: 600; }
-
-/* 首页超大标题 */
+/* ---------------- 首页超大标题 ---------------- */
 .hero {
   font-size: clamp(44px, 10.5vw, 128px);
   font-weight: 900;
@@ -229,111 +250,55 @@ html[data-theme="dark"] .link-card .ico img {
 }
 .hero .hero-cn { color: var(--accent); margin-left: .08em; }
 
-/* 键值行 */
-.kv-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); }
-.kv-item {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-left: 3px solid var(--border);
-  border-radius: 8px; padding: 9px 11px; font-size: 13px;
-}
-.kv-item .k { color: var(--muted); font-size: 12px; flex: none; }
-.kv-item .v {
-  font-weight: 600; text-align: right; word-break: break-word;
-  font-variant-numeric: tabular-nums;
-}
-.kv-item.ok   { border-left-color: #22c55e; }
-.kv-item.bad  { border-left-color: #ef4444; }
-.kv-item.warn { border-left-color: #eab308; }
-.kv-item.ok .v   { color: #15803d; }
-.kv-item.bad .v  { color: #b91c1c; }
-.kv-item.warn .v { color: #a16207; }
-html[data-theme="dark"] .kv-item.ok .v   { color: #4ade80; }
-html[data-theme="dark"] .kv-item.bad .v  { color: #fca5a5; }
-html[data-theme="dark"] .kv-item.warn .v { color: #fde047; }
-
-/* 标记胶囊 */
-.chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.chip {
-  font-size: 12.5px; padding: 6px 11px; border-radius: 999px;
-  border: 1px solid var(--border); background: var(--surface); color: var(--muted);
-}
-.chip.ok   { color: #15803d; border-color: rgba(34,197,94,.45); background: rgba(34,197,94,.10); }
-.chip.bad  { color: #b91c1c; border-color: rgba(239,68,68,.45); background: rgba(239,68,68,.10); }
-.chip.warn { color: #a16207; border-color: rgba(234,179,8,.45); background: rgba(234,179,8,.12); }
-html[data-theme="dark"] .chip.ok   { color: #4ade80; }
-html[data-theme="dark"] .chip.bad  { color: #fca5a5; }
-html[data-theme="dark"] .chip.warn { color: #fde047; }
-
-/* 信任评分 */
-.score-card { padding: 20px 22px; }
-.score-wrap { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
-.score-num {
-  font-size: 50px; font-weight: 800; line-height: 1;
-  font-variant-numeric: tabular-nums; letter-spacing: -.02em; color: var(--text);
-}
-.score-num::after {
-  content: '/100'; font-size: 15px; font-weight: 600;
-  color: var(--muted); margin-left: 3px; letter-spacing: 0;
-}
-.score-num.ok   { color: #15803d; }
-.score-num.warn { color: #a16207; }
-.score-num.bad  { color: #b91c1c; }
-html[data-theme="dark"] .score-num.ok   { color: #4ade80; }
-html[data-theme="dark"] .score-num.warn { color: #fde047; }
-html[data-theme="dark"] .score-num.bad  { color: #fca5a5; }
-.score-right { flex: 1; min-width: 220px; }
-.score-bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; }
-.score-bar i {
-  display: block; height: 100%; width: 0; border-radius: 6px;
-  background: var(--accent);
-  transition: width .7s cubic-bezier(.2,.8,.2,1), background .3s;
-}
-.score-bar i.ok   { background: #22c55e; }
-.score-bar i.warn { background: #eab308; }
-.score-bar i.bad  { background: #ef4444; }
-.score-label { margin-top: 9px; font-size: 13.5px; color: var(--muted); }
-
-.score-list { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 6px; }
-.score-list li {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
-  font-size: 13px; padding: 8px 11px; border-radius: 8px;
-  background: var(--bg); border: 1px solid var(--border);
-}
-.score-list li em { font-style: normal; color: var(--muted); font-size: 12px; margin-left: 7px; }
-.score-list li .d { font-weight: 700; font-variant-numeric: tabular-nums; flex: none; }
-.score-list li.ok .d   { color: #15803d; }
-.score-list li.warn .d { color: #a16207; }
-.score-list li.bad .d  { color: #b91c1c; }
-html[data-theme="dark"] .score-list li.ok .d   { color: #4ade80; }
-html[data-theme="dark"] .score-list li.warn .d { color: #fde047; }
-html[data-theme="dark"] .score-list li.bad .d  { color: #fca5a5; }
-
-/* ---------------- 正文排版 ---------------- */
-.prose { max-width: 72ch; }
-.prose h2 { font-size: 20px; margin: 34px 0 12px; }
-.prose h3 { font-size: 16.5px; margin: 26px 0 8px; }
-.prose p { color: var(--muted); font-size: 15.5px; margin: 0 0 16px; }
-.prose ul { color: var(--muted); font-size: 15.5px; padding-left: 22px; margin: 0 0 16px; }
-.prose li { margin-bottom: 6px; }
-
-.note {
-  background: var(--bg-soft); border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
-  border-radius: 10px; padding: 14px 18px; margin: 20px 0;
-  color: var(--muted); font-size: 14.5px;
-}
-
 /* ---------------- 404 ---------------- */
 .center-wrap { min-height: 62vh; display: grid; place-items: center; }
-.notfound { text-align: center; max-width: 520px; }
+.notfound { text-align: center; width: 100%; max-width: 760px; padding: 24px 0 40px; }
 .notfound .code {
   font-size: 68px; font-weight: 800; line-height: 1; letter-spacing: -2px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .notfound h1 { font-size: 20px; margin: 14px 0 8px; }
-.notfound p { color: var(--muted); font-size: 15px; margin: 0 0 26px; }
+.notfound p { color: var(--muted); font-size: 15px; margin: 0 0 18px; }
+
+/* 404 重做:当前访问路径提示 */
+.path-box {
+  display: inline-flex; align-items: baseline; justify-content: center;
+  flex-wrap: wrap; gap: 6px 10px;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: 10px; padding: 9px 15px; margin: 0 0 20px;
+  max-width: 100%;
+}
+.path-box .path-label { color: var(--muted); font-size: 12px; flex: none; }
+.path-box code {
+  background: none; border: 0; padding: 0;
+  color: var(--accent); font-size: 13px; font-weight: 600;
+  overflow-wrap: anywhere; text-align: left;
+}
+
+/* 404 重做:操作按钮与常用入口 */
+.nf-actions {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 10px; margin-bottom: 34px;
+}
+.nf-h {
+  font-size: 12px; color: var(--muted); font-weight: 600;
+  letter-spacing: 1px; margin: 0 0 13px;
+}
+.nf-links {
+  grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+  gap: 10px; text-align: left;
+}
+.nf-links .link-card { text-align: left; padding: 12px 14px; }
+.nf-links .link-card .meta { font-size: 14px; }
+.nf-links .link-card .meta small { font-size: 11.5px; }
+
+/* 常用入口去掉 IP 检测后剩 3 张；窄屏改单列，避免 2+1 孤卡 */
+@media (max-width: 620px) {
+  .notfound { max-width: 100%; padding: 14px 0 30px; }
+  .notfound .code { font-size: 56px; }
+  .nf-links { grid-template-columns: 1fr; }
+}
 
 /* ---------------- 页脚 ---------------- */
 footer {
@@ -352,65 +317,8 @@ footer {
   .list .date { min-width: 0; }
 }
 
-/* ---------------- 当前网络状况 ---------------- */
-.status-bar {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 14px 18px;
-  box-shadow: var(--shadow); margin-bottom: 6px;
-}
-.status-bar .msg { font-size: 14.5px; color: var(--muted); flex: 1; min-width: 200px; }
-.dot-live {
-  width: 10px; height: 10px; border-radius: 50%; flex: none;
-  background: var(--muted); transition: background .2s;
-}
-.dot-live.busy { background: #f59e0b; animation: dotPulse 1.4s ease-in-out infinite; }
-.dot-live.ok   { background: #22c55e; }
-.dot-live.fail { background: #ef4444; animation: dotPulse 1.4s ease-in-out infinite; }
-@keyframes dotPulse {
-  0%   { transform: scale(1);   opacity: 1; }
-  50%  { transform: scale(1.3); opacity: .65; }
-  100% { transform: scale(1);   opacity: 1; }
-}
-
+/* ---------------- 小标题 ---------------- */
 .sub-h {
   font-size: 15px; color: var(--muted); font-weight: 600;
   margin: 26px 0 12px; letter-spacing: .2px;
 }
-
-#netInfo .stat .k { font-size: 15px; font-weight: 600; word-break: break-word; line-height: 1.5; }
-
-/* 服务可达性 —— 紧凑小方框 */
-.probe-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 7px;
-}
-.probe-item {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--border);
-  border-radius: 8px;
-  padding: 7px 10px;
-  font-size: 12.5px;
-  line-height: 1.4;
-  transition: border-color .2s, opacity .2s;
-}
-.probe-item .nm {
-  font-weight: 500; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.probe-item .st {
-  flex: none; font-size: 10.5px; color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-.probe-item.pending { opacity: .65; }
-.probe-item.ok   { border-left-color: #22c55e; }
-.probe-item.fail { border-left-color: #ef4444; }
-.probe-item.ok   .st { color: #15803d; }
-.probe-item.fail .st { color: #b91c1c; }
-html[data-theme="dark"] .probe-item.ok   .st { color: #4ade80; }
-html[data-theme="dark"] .probe-item.fail .st { color: #fca5a5; }
-
-.hint { color: var(--muted); font-size: 13.5px; margin: 18px 0 0; max-width: 78ch; }
